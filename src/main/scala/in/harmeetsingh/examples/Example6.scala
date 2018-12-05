@@ -6,7 +6,7 @@ import scala.concurrent.Future
 import scala.util.Random
 
 
-object Example44 extends App {
+object Example6 extends App {
 
     // Execute Eagerly
     val hello = Future { println("Hello") }

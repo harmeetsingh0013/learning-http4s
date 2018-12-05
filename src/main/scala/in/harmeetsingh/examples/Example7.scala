@@ -4,7 +4,7 @@ import cats.effect.IO
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-object Example55 extends App {
+object Example7 extends App {
 
     // Memorising
     def addToGaugeIO(i: Int): IO[Int] = IO {
