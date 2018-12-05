@@ -13,6 +13,7 @@ class Example1 {
 
     val httpRoutes : HttpService[IO] = HttpService[IO] {
         case GET -> Root / "hello" / name =>
+            println("Executed via IO monad")
             Ok(s"Hello $name")
     }
 }

@@ -12,7 +12,8 @@ libraryDependencies ++= Seq(
     "org.http4s"        %% "http4s-circe"           % http4sVersion,
     "org.http4s"        %% "http4s-dsl"             % http4sVersion,
     "org.scalactic"     %% "scalactic"              % "3.0.5",
-    "org.scalatest"     %% "scalatest"              % "3.0.5"           % "test"
+    "org.scalatest"     %% "scalatest"              % "3.0.5"           % "test",
+    "io.monix"          %% "monix"                  % "3.0.0-RC1"
 )
 
 addCompilerPlugin("com.olegpy"     %% "better-monadic-for" % "0.2.4")
