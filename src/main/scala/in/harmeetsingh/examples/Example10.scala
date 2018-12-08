@@ -21,14 +21,14 @@ import org.http4s.dsl.io._
 import org.http4s.headers.`Content-Type`
 
 
-case class User1(name : String)
+case class User1(id : Option[Long], name : String)
 
 object User1 {
     implicit val encoder = jsonOf[IO, User1]
 
 }
 
-case class Hello1(greeting: String)
+case class Hello1(greeting: User1)
 
 class Example10(userRepo : UserRepo) {
 
@@ -38,9 +38,9 @@ class Example10(userRepo : UserRepo) {
             case req @ POST -> Root / "user" => for {
                 user <- req.as[User1]
                 updatedUser <- userRepo.addUser(user)
-                resp <- Ok(Hello1(updatedUser.name).asJson)
+                resp <- Ok(Hello1(updatedUser).asJson)
             } yield resp
-
+            
             case GET -> Root / "users" =>
                 Ok(
                     Stream("[") ++
@@ -60,16 +60,17 @@ class UserRepo(transactor : Transactor[IO]) {
     def createTable : ConnectionIO[Int] =
         sql"""
            CREATE TABLE user (
+             id Long PRIMARY KEY AUTO_INCREMENT,
              name VARCHAR(20) NOT NULL UNIQUE
            )
         """.update.run
 
     def addUser(user : User1) : IO[User1] =
-        sql"""INSERT INTO user (name) VALUES (${user.name})""".update.run
-            .transact(transactor).map(_ => user)
+        sql"""INSERT INTO user (name) VALUES (${user.name})""".update.withUniqueGeneratedKeys[Long]("id")
+            .transact(transactor).map(id => user.copy(id = Some(id)))
 
     def getUsers : Stream[IO, User1] = sql"""
-            SELECT name FROM user
+            SELECT * FROM user
         """.query[User1].stream.transact(transactor)
 }
 
@@ -77,7 +78,7 @@ object Example10 extends StreamApp[IO] {
 
     val transactor : IO[Transactor[IO]] = HikariTransactor.newHikariTransactor[IO](
         "org.h2.Driver",
-        "jdbc:h2:mem:todo;MODE=PostgreSQL;DB_CLOSE_DELAY=-1",
+        "jdbc:h2:mem:users;DB_CLOSE_DELAY=-1",
         "sa", ""
     )
 

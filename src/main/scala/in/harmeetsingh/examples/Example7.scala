@@ -6,7 +6,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 object Example7 extends App {
 
-    // Memorising
+    // Memoization
     def addToGaugeIO(i: Int): IO[Int] = IO {
         println("Execute addToGaugeIO ... ")
         i
